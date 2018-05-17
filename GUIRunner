@@ -1,0 +1,52 @@
+import java.awt.Color;
+import java.awt.MouseInfo;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JFrame;
+
+public class GUIRunner {
+
+	
+	public static void main(String[] args) {
+		JFrame f = new JFrame("DunkShot");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setVisible(true);
+		f.setSize(400,600);
+		f.setResizable(false);
+		f.setBackground(Color.GRAY);
+		
+		Ball ball = new Ball();
+		f.add(ball);
+		double start = System.nanoTime();
+		while(System.nanoTime() - start < 100000) {
+			
+		}
+		ball.moveTemp(60,60);
+		f.repaint();
+		
+		
+		int ballX = 2;
+		int ballY = 2;
+		class HoopandBallListener implements MouseMotionListener{
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				
+				double pwr = Math.sqrt(  Math.pow( (MouseInfo.getPointerInfo().getLocation().getX() - ballX), 2) 
+						+ Math.pow( (MouseInfo.getPointerInfo().getLocation().getY() - ballY), 2));
+				
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			
+			
+		}
+		
+	}
+}
