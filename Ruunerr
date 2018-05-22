@@ -1,0 +1,62 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.MouseInfo;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class GUIRunner {
+
+	
+	public static void main(String[] args) {
+		JFrame f = new JFrame("DunkShot");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setSize(600, 900);
+		f.setResizable(false);
+		f.setBackground(Color.GRAY);
+		
+//		JPanel back = new JPanel();
+//		back.setPreferredSize(new Dimension(600,900));
+		DrawingComponent game = new DrawingComponent();
+//		back.add(game);
+//		f.add(back);
+		f.add(game);
+		
+		class CanvasListener implements MouseListener{
+
+			public void mouseClicked(MouseEvent arg0) {
+				System.out.print("\nloc: " + arg0.getX() + " " + arg0.getY());
+			}
+			public void mouseEntered(MouseEvent arg0) {}
+			public void mouseExited(MouseEvent arg0) {}
+			public void mousePressed(MouseEvent arg0) {
+				if( game.hoopContains(arg0.getX(), arg0.getY()) ) {
+					System.out.print("\ncontains!");
+				}
+			}
+			public void mouseReleased(MouseEvent arg0) {}
+			
+		}
+		
+		class shotListener implements MouseMotionListener{
+
+			public void mouseDragged(MouseEvent arg0) {
+				System.out.print("\ndragged: " + arg0.getX());
+			}
+			public void mouseMoved(MouseEvent arg0) {}
+		}
+		
+		CanvasListener cListen = new CanvasListener();
+		shotListener sListen = new shotListener();
+		f.addMouseListener(cListen);
+		f.addMouseMotionListener(sListen);
+		
+		
+		//f.pack();
+		f.setVisible(true);
+	}
+}
