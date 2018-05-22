@@ -1,0 +1,45 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+
+import javax.swing.JComponent;
+
+public class DC extends JComponent {
+	private final Rectangle box;
+	private int score = 0;
+	
+	public DC() {
+		box = new Rectangle(50,50);
+		new Rectangle();
+	}
+	
+	public void paintComponent(Graphics g) {
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.GREEN);
+		g2.fill(box);
+	}
+
+	public boolean checkClick(int x, int y) {
+		return box.contains(x,y);
+	}
+	
+	public void repaintScreen() {
+		box.setLocation((int) (Math.random()*730), (int) (Math.random()*730));
+		this.repaint();	
+	}
+	
+	public void incrementScore() {
+		score++;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	
+	//to force the canvas to redraw itself: this.repaint();
+
+}
