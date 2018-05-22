@@ -1,0 +1,142 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+
+import javax.swing.JComponent;
+
+public class DrawingComponent extends JComponent {
+	
+	Ellipse2D.Double ball = new Ellipse2D.Double(100,300,20,20);
+	Rectangle hoop = new Rectangle(100,300,20,20);
+	Rectangle hoop2;
+	
+	public DrawingComponent() {
+		
+	}
+	
+	//Constructors probably need to be removed or changed, useless right now
+	public DrawingComponent(int xLoc, int yLoc, int height, int width) {
+		ball = new Ellipse2D.Double(xLoc, yLoc, height, width);
+	}
+	
+	public DrawingComponent(int height, int width) {
+		ball = new Ellipse2D.Double(0, 0, height, width);
+	}
+	
+	public void paintComponent(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		
+		g2.setColor(new Color(240,12,87));
+		g2.fill(ball);
+		g2.draw(hoop);
+		
+	}
+	
+	public boolean hoopContains(int mouseX, int mouseY) {
+		if(hoop.getX() < mouseX && hoop.getX() + hoop.getWidth() > mouseX && hoop.getY() < mouseY && hoop.getY() + hoop.getHeight() < mouseY) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public void setBallLocation(int xLoc, int yLoc) {
+		ball.x = xLoc;
+		ball.y = yLoc;
+	}
+	
+	public void setHoopLocation(int xLoc, int yLoc) {
+		hoop = new Rectangle(xLoc, yLoc, 20, 20);
+	}
+	
+	public void setHoop2Location(int xLoc, int yLoc) {
+		hoop2 = new Rectangle(xLoc, yLoc, 20, 20);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+}
+//		//Ellipse2D.Double ball = new Ellipse2D.Double((int)(20 + 360*Math.random()), 350, 20, 20);
+//	 private int x = 30;//(int)(20 + 360*Math.random());
+//	 private int y;
+//	 private int xChange = 20;
+//	 private int yChange = 20;
+//	 private double gConstant = -9.8;
+//	
+//	public void paintComponent(Graphics g) {
+//		Graphics2D g2 = (Graphics2D) g;
+//		super.paintComponent(g2);
+//		
+//		g2.setColor(Color.ORANGE);
+//		g2.fillOval(x, 350, 20, 20);
+//		
+//	}
+//	
+//	public Dimension getPreferredSize() {
+//        return new Dimension(400,600); // As suggested by camickr
+//    }
+//	
+//	public void setX(int width) {
+//		System.out.println(width);
+//		x = (int) (width * Math.random());
+//	}
+//	
+//	public void calculateChanges(double power) {
+//	//	xChange = (int) (power* Math.acos(a) )
+//		//need angle 
+//	}
+//	
+//	public  boolean contain(int xIn, int yIn) {
+//		if(xIn > x && xIn < x + 20 && yIn > y && yIn < y+20) {
+//			return true;
+//		}else
+//			return false;
+//	}
+//	
+//	public boolean isInMotion() {
+//		if(xChange == 0 && yChange == 0)
+//			return false;
+//		else
+//			return true;
+//	}
+//	
+//	public void move() {
+//		for(int i = 0; y <= 600 /*&& isInBasket == false */; i ++) {
+//			x += xChange;
+//			y += yChange;
+//			yChange -= 40;
+//			repaint();
+//		}
+//	}
+//	
+//	public void moveTemp(int changeXIn, int changeYIn) {
+//		for(int i = 0; y <= 600 /*&& isInBasket == false */; i ++) {
+//			x += changeXIn;
+//			y += changeYIn;
+//			changeYIn -= 10;
+//			//repaint();
+//		}
+//	}
+//	
+//	public void quickMove() {
+//		x -= xChange;
+//		y += yChange;
+//	}
+//	
+//	
+//	public int getX() {
+//		return x;
+//	}
+//	
+//	public int getY() {
+//		return y;
+//	}
+	
+
