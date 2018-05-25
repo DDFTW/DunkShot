@@ -1,0 +1,99 @@
+package com.company;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.MouseInfo;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+public class DunkShotRunner {
+
+    static double power;
+    static double powerFactor = 3;
+    static double distance;
+    static double basketX;
+    static double basketY;
+    static double xChange;
+    static double yChange;
+
+    public static void main(String[] args) {
+        JFrame f = new JFrame("DunkShot");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setSize(600, 900);
+        f.setResizable(false);
+        f.setBackground(Color.GRAY);
+
+//		JPanel back = new JPanel();
+//		back.setPreferredSize(new Dimension(600,900));
+        DrawingComponent game = new DrawingComponent();
+//		back.add(game);
+//		f.add(back);
+        f.add(game);
+
+        class CanvasListener implements MouseListener{
+
+            public void mouseClicked(MouseEvent arg0) {
+//                System.out.print("\nloc: " + arg0.getX() + " " + arg0.getY());
+            }
+            public void mouseEntered(MouseEvent arg0) {}
+            public void mouseExited(MouseEvent arg0) {}
+            public void mousePressed(MouseEvent arg0) {
+
+                basketX = game.getHoopX();
+                basketY = game.getHoopY();
+                if( game.hoopContains(arg0.getX(), arg0.getY()) ) {
+                    System.out.print("\ncontains!");
+                }
+            }
+            public void mouseReleased(MouseEvent arg0) {
+                //angles later. For now use random numbers as x and y Change that have no correlation with pwr
+                power = powerFactor * distance;
+                xChange = 4;
+                yChange = 4;
+                game.moveBall(xChange, yChange);
+
+            }
+
+        }
+
+
+        class shotListener implements MouseMotionListener{
+
+            public void mouseDragged(MouseEvent arg0) {
+//                System.out.print("\ndragged: " + arg0.getX());
+                distance = Math.sqrt(Math.pow(arg0.getX() - basketX, 2) + Math.pow(arg0.getY() - basketY, 2));
+            }
+            public void mouseMoved(MouseEvent arg0) {}
+        }
+
+        CanvasListener cListen = new CanvasListener();
+        shotListener sListen = new shotListener();
+        f.addMouseListener(cListen);
+        f.addMouseMotionListener(sListen);
+
+
+        //f.pack();
+        f.setVisible(true);
+
+        class TimerListener implements ActionListener {
+            public void actionPerformed(ActionEvent e){
+                // should only be called if mouseHasBeenReleased. or always, juct change x anf y changegame.moveBall2(4,4);
+                game.revalidate();
+                game.repaint();
+            }
+        }
+
+        Timer repainter = new Timer(33333333, new TimerListener());
+        repainter.start();
+       // System.out.println("start");
+        boolean gameOver = false;
+        // ! gameOver
+        double start = System.nanoTime();
+        while(System.nanoTime() - start <  Math.pow(10, 10)){
+
+        }
+        System.out.println("done");
+        repainter.stop();
+    }
+}
