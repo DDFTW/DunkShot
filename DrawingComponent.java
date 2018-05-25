@@ -1,4 +1,4 @@
-package com.company;
+
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,6 +13,7 @@ public class DrawingComponent extends JComponent {
     Ellipse2D.Double ball = new Ellipse2D.Double(100,300,20,20);
     Rectangle hoop = new Rectangle(100,300,20,20);
     Rectangle hoop2 = new Rectangle(300,100, 40, 40);
+    boolean hitHoop = false;
 
     public DrawingComponent() {
 
@@ -43,7 +44,7 @@ public class DrawingComponent extends JComponent {
 
             }
             ball.x += xChange;
-            ball.y += yChange;
+            ball.y -= yChange;
             //yChange -= 5
             if(hoopContainsBall(hoop2, ball.x, ball.y)){
                 ball.x = hoop2.x;
@@ -54,8 +55,21 @@ public class DrawingComponent extends JComponent {
     }
 
     public void moveBall2(double xChange, double yChange){
+        
         ball.x += xChange;
-        ball.y += yChange;
+        ball.y -= yChange;
+        //yChange -= 5
+        if(hoopContainsBall(hoop2, ball.x, ball.y)){
+             ball.x = hoop2.x;
+             ball.y = hoop2.y;
+             hitHoop = true;
+             DunkShotRunner.setInitalChanges(0, 0);
+        }
+        if(!hitHoop) {
+        	DunkShotRunner.decreaseY();
+        }
+            
+      
     }
 
     public boolean hoopContains(int mouseX, int mouseY) {
@@ -66,8 +80,8 @@ public class DrawingComponent extends JComponent {
         }
     }
 
-    public boolean hoopContainsBall(Rectangle in, double ballX, double ballY) {
-        if(in.getX() < ballX && in.getX() + in.getWidth() > ballX && in.getY() < ballY && in.getY() + in.getHeight() < ballY) {
+    public boolean hoopContainsBall(Rectangle hoop, double ballX, double ballY) {
+        if(hoop.getX() < ballX && hoop.getX() + hoop.getWidth() > ballX && hoop.getY() < ballY && hoop.getY() + hoop.getHeight() < ballY) {
             return true;
         }else {
             return false;
