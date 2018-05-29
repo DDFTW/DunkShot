@@ -1,4 +1,3 @@
-package com.company;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
@@ -12,6 +11,7 @@ public class DrawingComponent extends JComponent {
     private boolean hitHoop1 = true;
     private boolean hitHoop2 = false;
     private int score = 0;
+    private boolean isBeingRealigned = false;
 
     public DrawingComponent() {
 
@@ -117,7 +117,7 @@ public class DrawingComponent extends JComponent {
     }
 
     public boolean isOut(){
-        if(ball.x >= 599 || ball.x <= 0){
+        if(ball.x >= 560 || ball.x <= 0){
             return true;
         }else
             return false;
@@ -126,6 +126,10 @@ public class DrawingComponent extends JComponent {
     public void setBallLocation(int xLoc, int yLoc) {
         ball.x = xLoc;
         ball.y = yLoc;
+    }
+    
+    public double getBallY() {
+    	return ball.getY();
     }
 
     public double getHoopX() {
@@ -149,24 +153,23 @@ public class DrawingComponent extends JComponent {
     }
 
     public void realign(){
-        if(ball.y < 750){
+        if(ball.y < 800){
             ball.y += 3;
             hoop.y += 3;
             hoop2.y += 3;
+            isBeingRealigned = true;
         }
 
-        if(ball.y >= 750){
+        if(ball.y >= 800){
             hoop = hoop2;
             hoop2 = new Rectangle( (int)(20 + Math.random() * 550), (int)(50 + Math.random() * 500), 40, 40);
             hitHoop2 = false;
             hitHoop1 = true;
+            isBeingRealigned = false;
         }
     }
+    
+    public boolean getRealgined() {
+    	return isBeingRealigned;
+    }
 }
-
-
-
-
-
-
-
