@@ -23,6 +23,13 @@ public class DunkShotRunner {
     static double xDirection = 0;
     //-1 for down, +1 for up
     static double yDirection = 0;
+    
+    // don't end after a certain amount of time, end when game over
+    //restart button by restarting timer and resetting score
+    //make sure you can't cheat  and you have to wait till the hoops come down
+    
+    
+    
 
     public static void main(String[] args) {
         JFrame f = new JFrame("DunkShot");
@@ -59,11 +66,13 @@ public class DunkShotRunner {
 //                }
             }
             public void mouseReleased(MouseEvent arg0) {
-                //confirm that this works
-                calculateTheta2(arg0.getX(), arg0.getY(), xStarts, yStarts);
-                power = powerFactor * distance;
-                xChange = xDirection * power * Math.cos(theta);
-                yChange = yDirection * power * Math.sin(theta);
+                if(!isInMotion() & !game.getRealgined()) {
+	                calculateTheta2(arg0.getX(), arg0.getY(), xStarts, yStarts);
+	                power = powerFactor * distance;
+	                xChange = xDirection * power * Math.cos(theta);
+	                yChange = yDirection * power * Math.sin(theta);
+                }
+                
                 //  game.moveBall2(xChange, yChange);
 
             }
@@ -92,15 +101,24 @@ public class DunkShotRunner {
         class TimerListener implements ActionListener {
             public void actionPerformed(ActionEvent e){
                 // should only be called if mouseHasBeenReleased. or always, juct change x anf y change
-                if(game.isOut()){
-                    xChange *= -1;
-                }
-                game.moveBall2(xChange, yChange);
-                if(game.isInHoop2()){
-                    game.realign();
-                }
-                game.revalidate();
-                game.repaint();
+	              if(game.getBallY() < 900) {
+            		if(game.isOut()){
+	                    xChange *= -1;
+	                }
+	                game.moveBall2(xChange, yChange);
+	                if(game.isInHoop2()){
+	                    game.realign();
+	                }
+	                game.revalidate();
+	                game.repaint();
+	              } else {
+	            	  restart();
+	              }
+            }
+            
+            public void restart() {
+            	f.remove(game);
+            	//add new panel and restart buttons
             }
         }
 
@@ -152,5 +170,12 @@ public class DunkShotRunner {
         double yChanges = Math.abs(yStart - yRelease);
 
         theta = Math.atan(yChanges/xChanges);
+    }
+    
+    public static boolean isInMotion() {
+    	if(yChange == 0 && xChange == 0){
+    		return false;
+    	}else
+    		return true;
     }
 }
