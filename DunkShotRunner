@@ -1,3 +1,4 @@
+package com.company;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -9,13 +10,19 @@ import javax.swing.*;
 public class DunkShotRunner {
 
     static double power;
-    static double powerFactor = 3;
+    static double powerFactor = 0.06;
     static double distance;
     static double basketX;
     static double basketY;
-    static double xChange = 4;
-    static double yChange = 17;
+    static double xChange = 0;
+    static double yChange = 0;
     static double theta;
+    static double xStarts;
+    static double yStarts;
+    //-1 for left, +1 for right
+    static double xDirection = 0;
+    //-1 for down, +1 for up
+    static double yDirection = 0;
 
     public static void main(String[] args) {
         JFrame f = new JFrame("DunkShot");
@@ -39,20 +46,25 @@ public class DunkShotRunner {
             public void mouseEntered(MouseEvent arg0) {}
             public void mouseExited(MouseEvent arg0) {}
             public void mousePressed(MouseEvent arg0) {
-
+                xStarts = arg0.getX();
+                yStarts = arg0.getY();
                 basketX = game.getHoopX();
                 basketY = game.getHoopY();
-                if( game.hoopContains(arg0.getX(), arg0.getY()) ) {
-                    System.out.print("\ncontains!");
-                }
+//                if( game.hoopContains(arg0.getX(), arg0.getY()) ) {
+//                    System.out.print("\ncontains!");
+//                }
+//                if( game.hoop2Contains(arg0.getX(), arg0.getY()) ) {
+//                    System.out.print("\ncontains!");
+//                    System.out.println(arg0.getX() + " " + arg0.getY());
+//                }
             }
             public void mouseReleased(MouseEvent arg0) {
                 //confirm that this works
-            	calculateTheta(arg0.getX(), arg0.getY());
+                calculateTheta2(arg0.getX(), arg0.getY(), xStarts, yStarts);
                 power = powerFactor * distance;
-                xChange = power * Math.cos(theta);
-                yChange = power * Math.sin(theta);
-              //  game.moveBall2(xChange, yChange);
+                xChange = xDirection * power * Math.cos(theta);
+                yChange = yDirection * power * Math.sin(theta);
+                //  game.moveBall2(xChange, yChange);
 
             }
 
@@ -80,15 +92,21 @@ public class DunkShotRunner {
         class TimerListener implements ActionListener {
             public void actionPerformed(ActionEvent e){
                 // should only be called if mouseHasBeenReleased. or always, juct change x anf y change
-            	game.moveBall2(xChange, yChange);
+                if(game.isOut()){
+                    xChange *= -1;
+                }
+                game.moveBall2(xChange, yChange);
+                if(game.isInHoop2()){
+                    game.realign();
+                }
                 game.revalidate();
                 game.repaint();
             }
         }
 
-        Timer repainter = new Timer(132, new TimerListener());
+        Timer repainter = new Timer(17, new TimerListener());
         repainter.start();
-       // System.out.println("start");
+        // System.out.println("start");
         boolean gameOver = false;
         // ! gameOver
         double start = System.nanoTime();
@@ -98,21 +116,41 @@ public class DunkShotRunner {
         System.out.println("done");
         repainter.stop();
     }
-    
+
     public static void setInitalChanges(double newXChange, double newYChange) {
-    	xChange = newXChange;
-    	yChange = newYChange;    	
+        xChange = newXChange;
+        yChange = newYChange;
     }
-    
+
     public static void decreaseY() {
-    	yChange -= 0.5;
+        yChange -= 0.5;
     }
-    
+
     public static void calculateTheta(double xRelease, double yRelease) {
-    	//don't forget to figure out directions
-    	double xChanges = Math.abs(xRelease - basketX);
-    	double yChanges = Math.abs(basketY - yRelease); 
-    	
-    	theta = Math.atan(yChanges/xChanges);
+        //don't forget to figure out directions
+        double xChanges = Math.abs(xRelease - basketX);
+        double yChanges = Math.abs(basketY - yRelease);
+
+        theta = Math.atan(yChanges/xChanges);
+    }
+
+    //if drag does not start at basket
+    public static void calculateTheta2(double xRelease, double yRelease, double xStart, double yStart) {
+        //don't forget to figure out directions
+        if(xRelease - xStart < 0){
+            xDirection = 1;
+        } else if(xRelease - xStart > 0){
+            xDirection = -1;
+        }
+
+        if(yStart - yRelease < 0){
+            yDirection = 1;
+        }else if(yStart - yRelease > 0){
+            yDirection = -1;
+        }
+        double xChanges = Math.abs(xRelease - xStart);
+        double yChanges = Math.abs(yStart - yRelease);
+
+        theta = Math.atan(yChanges/xChanges);
     }
 }
