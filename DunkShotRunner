@@ -1,4 +1,3 @@
-package com.company;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -10,7 +9,7 @@ import javax.swing.*;
 public class DunkShotRunner {
 
     static double power;
-    static double powerFactor = 0.06;
+    static double powerFactor = 0.04;
     static double distance;
     static double basketX;
     static double basketY;
@@ -23,6 +22,10 @@ public class DunkShotRunner {
     static double xDirection = 0;
     //-1 for down, +1 for up
     static double yDirection = 0;
+    static Timer repainter;
+    static JPanel p;
+    static JButton reset;
+    static JButton quit;
     
     // don't end after a certain amount of time, end when game over
     //restart button by restarting timer and resetting score
@@ -36,7 +39,7 @@ public class DunkShotRunner {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 900);
         f.setResizable(false);
-        f.setBackground(Color.GRAY);
+        f.setBackground(new Color(180,240,240));
 
 //		JPanel back = new JPanel();
 //		back.setPreferredSize(new Dimension(600,900));
@@ -97,6 +100,30 @@ public class DunkShotRunner {
 
         //f.pack();
         f.setVisible(true);
+        
+        
+        class ResetListener implements ActionListener{
+
+			public void actionPerformed(ActionEvent arg0) {
+				game.reset();
+				yChange = 0;
+				xChange = 0;
+				f.remove(p);
+				f.revalidate();
+				f.repaint();
+				repainter.restart();
+			}
+        	
+        }
+        
+        class StopListener implements ActionListener{
+
+			public void actionPerformed(ActionEvent e) {
+				f.dispose();
+				
+			}
+        	
+        }
 
         class TimerListener implements ActionListener {
             public void actionPerformed(ActionEvent e){
@@ -116,13 +143,26 @@ public class DunkShotRunner {
 	              }
             }
             
+            
             public void restart() {
-            	f.remove(game);
+            	repainter.stop();
+            	p = new JPanel();
+            	reset = new JButton("Restart");
+            	reset.addActionListener(new ResetListener());
+            	quit = new JButton("Quit");
+            	quit.addActionListener(new StopListener());
+            	p.setLayout(new GridLayout(2,1));
+            	p.add(reset);
+            	p.add(quit);            	
+            	f.add(p);
+            	f.revalidate();
+            	f.repaint();
+            	
             	//add new panel and restart buttons
             }
         }
 
-        Timer repainter = new Timer(17, new TimerListener());
+        repainter = new Timer(17, new TimerListener());
         repainter.start();
         // System.out.println("start");
         boolean gameOver = false;
