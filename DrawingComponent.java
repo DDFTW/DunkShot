@@ -151,9 +151,19 @@ public class DrawingComponent extends JComponent {
     public boolean isInHoop2(){
         return hitHoop2;
     }
+    
+    public void reset() {
+    	 ball = new Ellipse2D.Double(100, 500, 40, 40);
+    	 hoop = new Rectangle(100, 500, 40, 40);
+    	 hoop2 = new Rectangle(300, 200, 40, 40);
+    	 hitHoop1 = true;
+    	 hitHoop2 = false;
+    	 score = 0;
+    	 isBeingRealigned = false;
+    }
 
     public void realign(){
-        if(ball.y < 800){
+        if(ball.y < 750){
             ball.y += 3;
             hoop.y += 3;
             hoop2.y += 3;
