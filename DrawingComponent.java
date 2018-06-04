@@ -1,3 +1,6 @@
+package com.company;
+
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
@@ -13,50 +16,24 @@ public class DrawingComponent extends JComponent {
     private int score = 0;
     private boolean isBeingRealigned = false;
 
-    public DrawingComponent() {
+    public DrawingComponent() {}
 
-    }
-
-    //Constructors probably need to be removed or changed, useless right now
-    public DrawingComponent(int xLoc, int yLoc, int height, int width) {
-        ball = new Ellipse2D.Double(xLoc, yLoc, height, width);
-    }
-
-    public DrawingComponent(int height, int width) {
-        ball = new Ellipse2D.Double(0, 0, height, width);
-    }
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setColor(new Color(240, 12, 87));
+
         g2.setFont(new Font("not sure", Font.BOLD, 40));
         g2.drawString("" + score, 290, 50);
+        g2.setColor(new Color(240, 117, 45));
         g2.fill(ball);
+        g2.setColor(new Color(240, 12, 87));
+        g2.setStroke(new BasicStroke(5));
         g2.draw(hoop);
         g2.draw(hoop2);
 
     }
 
-//    public void moveBall(double xChange, double yChange) {
-//        boolean hitHoop = false;
-//        while (!hitHoop && ball.y <= 950) {
-//            double start = System.nanoTime();
-//            while (System.nanoTime() - start < Math.pow(10, 9)) {
-//
-//            }
-//            ball.x += xChange;
-//            ball.y -= yChange;
-//            //yChange -= 5
-//            if (hoopContainsBall(hoop2, ball.x, ball.y)) {
-//                ball.x = hoop2.x;
-//                ball.y = hoop2.y;
-//                hitHoop = true;
-//            }
-//        }
-//    }
-
-    //boolean scoreGiven = false;
     public void moveBall2(double xChange, double yChange) {
 
         ball.x += xChange;
@@ -68,7 +45,7 @@ public class DrawingComponent extends JComponent {
             hitHoop2 = false;
         }
 
-        if (hoopContainsBall(hoop2, ball.x, ball.y)) {
+        if (hoop2ContainsBall(hoop2, ball.x, ball.y)) {
             ball.x = hoop2.x;
             ball.y = hoop2.y;
             hitHoop2 = true;
@@ -87,29 +64,21 @@ public class DrawingComponent extends JComponent {
             DunkShotRunner.decreaseY();
         }
 
-        if(hitHoop2 && hoop2.y >= 747){
+        if(hitHoop2 && hoop2.y >= 647){
             score++;
-        }
-    }
-
-    public boolean hoopContains(int mouseX, int mouseY) {
-        if (hoop.getX() <= mouseX && hoop.getX() + hoop.getWidth() >= mouseX && hoop.getY() <= mouseY && hoop.getY() + hoop.getHeight() >= mouseY) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean hoop2Contains(int mouseX, int mouseY) {
-        if (hoop2.getX() <= mouseX && hoop2.getX() + hoop2.getWidth() >= mouseX && hoop2.getY() <= mouseY && hoop2.getY() + hoop2.getHeight() >= mouseY) {
-            return true;
-        } else {
-            return false;
         }
     }
 
     public boolean hoopContainsBall(Rectangle hoop, double ballX, double ballY) {
         if (hoop.getX() <= ballX && hoop.getX() + hoop.getWidth() >= ballX && hoop.getY() <= ballY && hoop.getY() + hoop.getHeight() >= ballY) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean hoop2ContainsBall(Rectangle hoop, double ballX, double ballY) {
+        if (hoop.getX() -20 <= ballX && hoop.getX() + hoop.getWidth() >= ballX && hoop.getY() -20 <= ballY && hoop.getY() + hoop.getHeight() >= ballY) {
             return true;
         } else {
             return false;
@@ -123,13 +92,8 @@ public class DrawingComponent extends JComponent {
             return false;
     }
 
-    public void setBallLocation(int xLoc, int yLoc) {
-        ball.x = xLoc;
-        ball.y = yLoc;
-    }
-    
     public double getBallY() {
-    	return ball.getY();
+        return ball.getY();
     }
 
     public double getHoopX() {
@@ -140,46 +104,42 @@ public class DrawingComponent extends JComponent {
         return hoop.getY();
     }
 
-    public void setHoopLocation(int xLoc, int yLoc) {
-        hoop = new Rectangle(xLoc, yLoc, 20, 20);
-    }
-
-    public void setHoop2Location(int xLoc, int yLoc) {
-        hoop2 = new Rectangle(xLoc, yLoc, 20, 20);
-    }
-
     public boolean isInHoop2(){
         return hitHoop2;
     }
-    
+
+    public int getScore(){
+        return score;
+    }
+
     public void reset() {
-    	 ball = new Ellipse2D.Double(100, 500, 40, 40);
-    	 hoop = new Rectangle(100, 500, 40, 40);
-    	 hoop2 = new Rectangle(300, 200, 40, 40);
-    	 hitHoop1 = true;
-    	 hitHoop2 = false;
-    	 score = 0;
-    	 isBeingRealigned = false;
+        ball = new Ellipse2D.Double(100, 500, 40, 40);
+        hoop = new Rectangle(100, 500, 40, 40);
+        hoop2 = new Rectangle(300, 200, 40, 40);
+        hitHoop1 = true;
+        hitHoop2 = false;
+        score = 0;
+        isBeingRealigned = false;
     }
 
     public void realign(){
-        if(ball.y < 750){
+        if(ball.y < 650){
             ball.y += 3;
             hoop.y += 3;
             hoop2.y += 3;
             isBeingRealigned = true;
         }
 
-        if(ball.y >= 800){
+        if(ball.y >= 650){
             hoop = hoop2;
-            hoop2 = new Rectangle( (int)(20 + Math.random() * 550), (int)(50 + Math.random() * 500), 40, 40);
+            hoop2 = new Rectangle( (int)(20 + Math.random() * 550), (int)(125 + Math.random() * 425), 40, 40);
             hitHoop2 = false;
             hitHoop1 = true;
             isBeingRealigned = false;
         }
     }
-    
+
     public boolean getRealgined() {
-    	return isBeingRealigned;
+        return isBeingRealigned;
     }
 }
