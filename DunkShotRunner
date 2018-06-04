@@ -1,9 +1,11 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.MouseInfo;
-import java.awt.event.*;
+package com.company;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class DunkShotRunner {
@@ -18,41 +20,36 @@ public class DunkShotRunner {
     static double theta;
     static double xStarts;
     static double yStarts;
-    //-1 for left, +1 for right
     static double xDirection = 0;
-    //-1 for down, +1 for up
     static double yDirection = 0;
     static Timer repainter;
     static JPanel p;
     static JButton reset;
     static JButton quit;
-    
-    // don't end after a certain amount of time, end when game over
-    //restart button by restarting timer and resetting score
-    //make sure you can't cheat  and you have to wait till the hoops come down
-    
-    
-    
+
+    //Directions:  Drag in any direction to launch ball in the opposite direction of the drag, like pulling a sling shot.
+    //the further the mouse is dragged, the more power the launch will have and the further the ball will go.
+    //The goal is to get it into the hoop as many times as you can.
+
+
+
+
+    //NOTE: Sometimes when resetting, the hoops and score take a while to disappear. Not sure why.
+
+
 
     public static void main(String[] args) {
         JFrame f = new JFrame("DunkShot");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 900);
         f.setResizable(false);
-        f.setBackground(new Color(180,240,240));
-
-//		JPanel back = new JPanel();
-//		back.setPreferredSize(new Dimension(600,900));
         DrawingComponent game = new DrawingComponent();
-//		back.add(game);
-//		f.add(back);
+        f.getContentPane().setBackground(new Color(86, 211, 240));
         f.add(game);
 
         class CanvasListener implements MouseListener{
 
-            public void mouseClicked(MouseEvent arg0) {
-//                System.out.print("\nloc: " + arg0.getX() + " " + arg0.getY());
-            }
+            public void mouseClicked(MouseEvent arg0) {}
             public void mouseEntered(MouseEvent arg0) {}
             public void mouseExited(MouseEvent arg0) {}
             public void mousePressed(MouseEvent arg0) {
@@ -60,24 +57,15 @@ public class DunkShotRunner {
                 yStarts = arg0.getY();
                 basketX = game.getHoopX();
                 basketY = game.getHoopY();
-//                if( game.hoopContains(arg0.getX(), arg0.getY()) ) {
-//                    System.out.print("\ncontains!");
-//                }
-//                if( game.hoop2Contains(arg0.getX(), arg0.getY()) ) {
-//                    System.out.print("\ncontains!");
-//                    System.out.println(arg0.getX() + " " + arg0.getY());
-//                }
+
             }
             public void mouseReleased(MouseEvent arg0) {
                 if(!isInMotion() & !game.getRealgined()) {
-	                calculateTheta2(arg0.getX(), arg0.getY(), xStarts, yStarts);
-	                power = powerFactor * distance;
-	                xChange = xDirection * power * Math.cos(theta);
-	                yChange = yDirection * power * Math.sin(theta);
+                    calculateTheta2(arg0.getX(), arg0.getY(), xStarts, yStarts);
+                    power = powerFactor * distance;
+                    xChange = xDirection * power * Math.cos(theta);
+                    yChange = yDirection * power * Math.sin(theta);
                 }
-                
-                //  game.moveBall2(xChange, yChange);
-
             }
 
         }
@@ -97,82 +85,69 @@ public class DunkShotRunner {
         f.addMouseListener(cListen);
         f.addMouseMotionListener(sListen);
 
-
-        //f.pack();
         f.setVisible(true);
-        
-        
+
+
         class ResetListener implements ActionListener{
 
-			public void actionPerformed(ActionEvent arg0) {
-				game.reset();
-				yChange = 0;
-				xChange = 0;
-				f.remove(p);
-				f.revalidate();
-				f.repaint();
-				repainter.restart();
-			}
-        	
-        }
-        
-        class StopListener implements ActionListener{
+            public void actionPerformed(ActionEvent arg0) {
+                game.reset();
+                yChange = 0;
+                xChange = 0;
+                f.remove(p);
+                f.revalidate();
+                f.repaint();
+                repainter.restart();
+            }
 
-			public void actionPerformed(ActionEvent e) {
-				f.dispose();
-				
-			}
-        	
+        }
+
+        class StopListener implements ActionListener{
+            public void actionPerformed(ActionEvent e) {f.dispose();}
         }
 
         class TimerListener implements ActionListener {
             public void actionPerformed(ActionEvent e){
-                // should only be called if mouseHasBeenReleased. or always, juct change x anf y change
-	              if(game.getBallY() < 900) {
-            		if(game.isOut()){
-	                    xChange *= -1;
-	                }
-	                game.moveBall2(xChange, yChange);
-	                if(game.isInHoop2()){
-	                    game.realign();
-	                }
-	                game.revalidate();
-	                game.repaint();
-	              } else {
-	            	  restart();
-	              }
+                if(game.getBallY() < 900) {
+                    if(game.isOut()){xChange *= -1;}
+                    game.moveBall2(xChange, yChange);
+                    if(game.isInHoop2()){game.realign();}
+                    game.revalidate();
+                    game.repaint();
+                } else {restart();}
             }
-            
-            
+
+
             public void restart() {
-            	repainter.stop();
-            	p = new JPanel();
-            	reset = new JButton("Restart");
-            	reset.addActionListener(new ResetListener());
-            	quit = new JButton("Quit");
-            	quit.addActionListener(new StopListener());
-            	p.setLayout(new GridLayout(2,1));
-            	p.add(reset);
-            	p.add(quit);            	
-            	f.add(p);
-            	f.revalidate();
-            	f.repaint();
-            	
-            	//add new panel and restart buttons
+                repainter.stop();
+                p = new JPanel();
+                reset = new JButton("Your Score: " + game.getScore() + "\n \n \n    Restart?");
+                reset.addActionListener(new ResetListener());
+                reset.setFont(new Font("Arial", Font.PLAIN, 40));
+                reset.setBackground(new Color(184, 152, 180));
+                try{
+                    Image resetBack = ImageIO.read(getClass().getResource("pierreJackson.jpg"));
+                    reset.setIcon(new ImageIcon(resetBack));
+                }catch (Exception ex) {}
+                quit = new JButton("Quit");
+                quit.addActionListener(new StopListener());
+                quit.setFont(new Font("Arial", Font.PLAIN, 40));
+                quit.setBackground(new Color(184, 139, 99));
+                try{
+                    Image quitBack= ImageIO.read(getClass().getResource("tiredGordon.jpg"));
+                    quit.setIcon(new ImageIcon(quitBack));
+                }catch (Exception ex) { }
+                p.setLayout(new GridLayout(2,1));
+                p.add(reset);
+                p.add(quit);
+                f.add(p);
+                f.revalidate();
+                f.repaint();
             }
         }
 
         repainter = new Timer(17, new TimerListener());
         repainter.start();
-        // System.out.println("start");
-        boolean gameOver = false;
-        // ! gameOver
-        double start = System.nanoTime();
-        while(System.nanoTime() - start <  Math.pow(10, 11)){
-
-        }
-        System.out.println("done");
-        repainter.stop();
     }
 
     public static void setInitalChanges(double newXChange, double newYChange) {
@@ -180,9 +155,7 @@ public class DunkShotRunner {
         yChange = newYChange;
     }
 
-    public static void decreaseY() {
-        yChange -= 0.5;
-    }
+    public static void decreaseY() {yChange -= 0.5;}
 
     public static void calculateTheta(double xRelease, double yRelease) {
         //don't forget to figure out directions
@@ -211,11 +184,10 @@ public class DunkShotRunner {
 
         theta = Math.atan(yChanges/xChanges);
     }
-    
+
     public static boolean isInMotion() {
-    	if(yChange == 0 && xChange == 0){
-    		return false;
-    	}else
-    		return true;
+        if(yChange == 0 && xChange == 0){
+            return false;
+        }else return true;
     }
 }
